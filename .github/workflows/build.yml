@@ -1,46 +1,11 @@
-name: PR Manual Approval + Build
+name: Manual Gate
 
 on:
-  pull_request_target:
-    types: [opened, reopened, edited, ready_for_review]
-  issue_comment:
-    types: [created]
+  pull_request:
+  workflow_dispatch:
 
 jobs:
-  placeholder:
-    name: Manual PR Approval
-    runs-on: ubuntu-latest
-    outputs:
-      approved: ${{ steps.check.outputs.approved }}
-    steps:
-      - id: check
-        run: |
-          # Ignore draft PRs
-          if [[ "${{ github.event.pull_request.draft }}" == "true" ]]; then
-            echo "approved=false" >> $GITHUB_OUTPUT
-            echo "PR is draft, waiting..."
-            exit 0
-          fi
-
-          # Check if comment is /approve
-          if [[ "${{ github.event_name }}" == "issue_comment" ]] && [[ "${{ github.event.comment.body }}" == "/approve" ]]; then
-            echo "approved=true" >> $GITHUB_OUTPUT
-            echo "PR approved by $GITHUB_ACTOR"
-          else
-            echo "approved=false" >> $GITHUB_OUTPUT
-            echo "Waiting for /approve comment..."
-          fi
-
-  firmware-build:
-    name: Firmware Build
-    needs: placeholder
-    if: needs.placeholder.outputs.approved == 'true'
+  manual-gate:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Run Build
-        run: |
-          echo "### Running build for PR #${{ github.event.pull_request.number }}"
-          # ici tu mets tes commandes de build réelles
+      - run: echo "pending manual run"
