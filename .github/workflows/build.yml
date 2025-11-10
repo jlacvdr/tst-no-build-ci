@@ -15,6 +15,7 @@ jobs:
     steps:
       - id: check
         run: |
+          echo "=> ${{ github.event.comment.body }}"
           if [[ "${{ github.event_name }}" == "issue_comment" ]] && [[ "${{ github.event.comment.body }}" == "/approve" ]]; then
             echo "approved=true" >> $GITHUB_OUTPUT
             echo "Approved by $GITHUB_ACTOR"
