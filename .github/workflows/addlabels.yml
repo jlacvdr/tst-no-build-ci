@@ -1,0 +1,15 @@
+name: Add labels
+
+on:
+  pull_request:
+   types: [opened, labeled, unlabeled, synchronize]
+
+jobs:
+  addLabels:
+    runs-on: ubuntu-latest
+    steps:
+      - name: labeled
+        run: |
+          echo "id:${{ github.event.comment.id }}"
+          echo "label:${{ github.event.label.name }}"
+          echo "labels:${{ github.event.pull_request.labels }}"
