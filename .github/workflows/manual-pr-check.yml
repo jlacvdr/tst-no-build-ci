@@ -1,11 +1,10 @@
-name: Manual PR Gate
-
 on:
-  workflow_dispatch:
+  issue_comment:
+    types: [created]
 
 jobs:
-  manual-gate:
+  approve:
+    if: github.event.comment.body == '/approve'
     runs-on: ubuntu-latest
     steps:
-      - name: ok
-        run: echo "validated by human"
+      - run: echo "approved"
