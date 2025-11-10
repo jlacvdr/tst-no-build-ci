@@ -1,0 +1,11 @@
+name: Manual PR Gate
+
+on:
+  workflow_dispatch:
+
+jobs:
+  manual-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: ok
+        run: echo "validated by human"
