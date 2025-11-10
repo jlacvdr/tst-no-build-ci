@@ -1,5 +1,5 @@
 
-name: build and upload
+name: build and upload2
 
 on:
   pull_request:
