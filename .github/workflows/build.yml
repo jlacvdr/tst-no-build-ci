@@ -9,3 +9,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo "pending manual run"
+
+  real-build:
+    if: github.event_name == 'workflow_dispatch'
+    needs: manual-gate
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "real build here"
