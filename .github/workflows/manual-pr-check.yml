@@ -1,11 +1,1 @@
-name: Manual build
 
-on:
-  issue_comment:
-    types: [created]
-    
-jobs:
-  approve:
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "approved"
