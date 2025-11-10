@@ -2,6 +2,8 @@
 name: build and upload2
 
 on:
+  pull_request:
+    types: [opened, synchronize, reopened]
   issue_comment:
     types: [created]
 
