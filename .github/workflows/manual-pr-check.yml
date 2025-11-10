@@ -1,10 +1,8 @@
 on:
-  issue_comment:
-    types: [created]
+  push:
 
 jobs:
   approve:
-    if: github.event.comment.body == '/approve'
     runs-on: ubuntu-latest
     steps:
       - run: echo "approved"
