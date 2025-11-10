@@ -1,21 +1,44 @@
-name: Manual Gate
+name: Firmware build and upload
 
 on:
-  pull_request:  
+  push:
+    branches:
+      - develop
+      - trunk
+      - "release/stable-*"
+    paths-ignore:
+      - Dockerfile
+  pull_request:
+    types:
+      - labeled
+  workflow_dispatch:
+    inputs:
+      cache-enabled:
+        description: Enable or disable cache
+        type: boolean
+        required: false
+        default: true
 
 jobs:
-  gate:
+  firmware-build:
+    if: >-
+      ${{ github.event_name == 'workflow_dispatch' ||
+          (github.event_name == 'push' &&
+            (github.ref == 'refs/heads/develop' ||
+             github.ref == 'refs/heads/trunk' ||
+             startsWith(github.ref, 'refs/heads/release/stable-')
+          ) ||
+          (github.event_name == 'pull_request' &&
+            contains(join(github.event.pull_request.labels.*.name, ' '), 'approved'))
+          )
+      }}
     runs-on: ubuntu-latest
-    if: contains(join(github.event.pull_request.labels.*.name, ' '), 'approved')
+    strategy:
+      matrix:
+        product: [unified, waffle]
+        type: [internal, release]
     steps:
-      - name: do manual thing
-        if: github.event_name == 'workflow_dispatch'
-        run: |
-          echo "run manual stuff"
-          exit 0
-    
-      - name: noop for PR creation
+      - name: build
         if: github.event_name != 'workflow_dispatch'
         run: |
           echo "noop"
-          exit -1
