@@ -8,5 +8,6 @@ jobs:
     steps:
       - name: issue_comment
         run: |
-          echo ${{ github.event.comment.id }}
-          echo ${{ github.event.pull_request.labels }}
+          echo "id:${{ github.event.comment.id }}"
+          echo "label:${{ github.event.label.name }}"
+          echo "labels:${{ github.event.pull_request.labels }}"
