@@ -1,9 +1,10 @@
 name: PR Manual Approval
 
 on:
-  pull_request_target:
   issue_comment:
     types: [created]
+  pull_request_target:  # pour que le check soit visible
+    types: [opened, reopened, edited]
 
 jobs:
   # job “fake” juste pour avoir le check pending
@@ -15,17 +16,12 @@ jobs:
     steps:
       - id: check
         run: |
-          echo "comment.body: ${{ github.event.comment.body }}"
-          echo "comment.html_url: ${{ github.event.comment.html_url }}"
-
-          echo "PR draft status: ${{ github.event.pull_request.draft }}"
           if [[ "${{ github.event_name }}" == "issue_comment" ]] && [[ "${{ github.event.comment.body }}" == "/approve" ]]; then
             echo "approved=true" >> $GITHUB_OUTPUT
             echo "Approved by $GITHUB_ACTOR"
           else
             echo "approved=false" >> $GITHUB_OUTPUT
             echo "Waiting for /approve"
-          fi
 
   # job réel qui ne run que sur commentaire
   firmware-build:
