@@ -7,6 +7,7 @@ on:
 jobs:
   gate:
     runs-on: ubuntu-latest
+    if: contains(join(github.event.pull_request.labels.*.name, ' '), 'approved')
     steps:
       - name: do manual thing
         if: github.event_name == 'workflow_dispatch'
