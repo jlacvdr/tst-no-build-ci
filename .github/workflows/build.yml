@@ -6,7 +6,16 @@ on:
 
 jobs:
   gate:
-    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
-      - run: echo "I will run always when manually dispatched"
+      - name: do manual thing
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          echo "run manual stuff"
+          exit 0
+    
+      - name: noop for PR creation
+        if: github.event_name != 'workflow_dispatch'
+        run: |
+          echo "noop"
+          exit -1
