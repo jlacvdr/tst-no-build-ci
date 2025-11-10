@@ -2,12 +2,12 @@
 name: build and upload2
 
 on:
-  issue_comment:
-    types: [created]
+  pull_request_target:   # rend visible dans la PR comme check
+  workflow_dispatch:     # tu le lances à la main uniquement
 
 jobs: 
   firmware-build:
-    if: github.event.issue.pull_request != null && github.event.comment.body == '/approve'
+    if: github.event_name == 'workflow_dispatch'   # ne run que si manuel
     runs-on: ubuntu-latest
     steps:
       - name: Summary and Download Instructions
