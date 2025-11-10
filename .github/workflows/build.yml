@@ -9,6 +9,7 @@ on:
 
 jobs: 
   firmware-build:
+    if: github.event.issue.pull_request != null && github.event.comment.body == '/approve'
     runs-on: ubuntu-latest
     steps:
       - name: Summary and Download Instructions
