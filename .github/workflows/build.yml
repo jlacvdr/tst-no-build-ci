@@ -16,6 +16,8 @@ jobs:
       - id: check
         run: |
           echo "comment.body: ${{ github.event.comment.body }}"
+          echo "comment.html_url: ${{ github.event.comment.html_url }}"
+
           echo "PR draft status: ${{ github.event.pull_request.draft }}"
           if [[ "${{ github.event_name }}" == "issue_comment" ]] && [[ "${{ github.event.comment.body }}" == "/approve" ]]; then
             echo "approved=true" >> $GITHUB_OUTPUT
