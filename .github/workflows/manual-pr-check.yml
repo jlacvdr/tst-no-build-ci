@@ -1,6 +1,7 @@
 on:
-  push:
-
+  issue_comment:
+    types: [created]
+    
 jobs:
   approve:
     runs-on: ubuntu-latest
