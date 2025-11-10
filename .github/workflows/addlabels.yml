@@ -2,11 +2,12 @@ name: Add labels
 
 on:
   pull_request:
-   types: [opened, labeled, unlabeled, synchronize]
+   types: [labeled]
 
 jobs:
   addLabels:
     runs-on: ubuntu-latest
+    if: contains(join(github.event.pull_request.labels.*.name, ' '), 'approved')
     steps:
       - name: labeled
         run: |
