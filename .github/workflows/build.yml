@@ -2,6 +2,7 @@
 name: build and upload2
 
 on:
+  pull_request:
   issue_comment:
     types: [created]
 
