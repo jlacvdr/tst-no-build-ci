@@ -2,15 +2,12 @@
 name: build and upload2
 
 on:
-  pull_request:
-    types:
-      - opened
-      - reopened
-      - synchronize
-  workflow_dispatch:
+  issue_comment:
+    types: [created]
 
 jobs: 
   firmware-build:
+    if: github.event.issue.pull_request != null && github.event.comment.body == '/approve'
     runs-on: ubuntu-latest
     steps:
       - name: Summary and Download Instructions
