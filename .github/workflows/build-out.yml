@@ -3,30 +3,33 @@ name: test outputs var
 on: push
 
 jobs:
-  job1:
+  firmware-build:
     runs-on: ubuntu-latest
     outputs:
-      update_dl_cache_needed: ${{ steps.update-dl-cache.outputs.needed }}
+      update-dl-cache-needed: ${{ steps.update-dl-cache.outputs.needed }}
+    strategy:
+      matrix:
+        product: [unified, waffle]
+        type: [internal, release]
+    env:
+      typ_product: ${{ matrix.product }}-${{ matrix.type }}
     steps:
-      - name: set output
+      - name: Check cache download needs to be updated
         id: update-dl-cache
         run: |
-          # echo "needed=true" >> "$GITHUB_OUTPUT"
-
-  job2:
+          CURRENT=$(du -sb "${CACHE_DIR}/dl" | cut -f1)
+          echo "Cache size before:${{ steps.dl-cache-size.outputs.current }} after:$CURRENT"
+          if [[ "${{ steps.dl-cache-size.outputs.current }}" -ne "$CURRENT" ]]; then
+            echo "needed=true" >> "$GITHUB_OUTPUT"
+          fi
+          
+  update-dl-cache:
+    needs: firmware-build
     runs-on: ubuntu-latest
-    needs: job1
+    if: ${{ needs.firmware-build.outputs.update-dl-cache-needed == 'true' }}
     steps:
-      - name: retrieve output
-        run: |
-          echo ${{ needs.job1.outputs.update_dl_cache_needed }}
 
-
-  job2_if_true:
-    runs-on: ubuntu-latest
-    if: ${{ needs.job1.outputs.update_dl_cache_needed == 'true' }}    
-    needs: job1
-    steps:
-      - name: retrieve output
+      - name: Dump out
         run: |
-          echo ${{ needs.job1.outputs.update_dl_cache_needed }}
+          echo "$GITHUB_OUTPUT"
+        timeout-minutes: 120
