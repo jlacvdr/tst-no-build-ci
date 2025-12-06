@@ -17,11 +17,7 @@ jobs:
       - name: Check cache download needs to be updated
         id: update-dl-cache
         run: |
-          CURRENT=$(du -sb "${CACHE_DIR}/dl" | cut -f1)
-          echo "Cache size before:${{ steps.dl-cache-size.outputs.current }} after:$CURRENT"
-          if [[ "${{ steps.dl-cache-size.outputs.current }}" -ne "$CURRENT" ]]; then
-            echo "needed=true" >> "$GITHUB_OUTPUT"
-          fi
+          echo "needed=true" >> "$GITHUB_OUTPUT"
           
   update-dl-cache:
     needs: firmware-build
