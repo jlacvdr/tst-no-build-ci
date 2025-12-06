@@ -18,3 +18,13 @@ jobs:
       - name: retrieve output
         run: |
           echo ${{ needs.job1.outputs.update_dl_cache_needed }}
+
+
+  job2_if_true:
+    runs-on: ubuntu-latest
+    if: ${{ needs.job1.outputs.update_dl_cache_needed == 'true' }}    
+    needs: job1
+    steps:
+      - name: retrieve output
+        run: |
+          echo ${{ needs.job1.outputs.update_dl_cache_needed }}
