@@ -1,44 +1,49 @@
-name: Firmware build and upload
+name: test outputs var
 
-on:
-  push:
-    branches:
-      - develop
-      - main
-      - "release/stable-*"
-    paths-ignore:
-      - Dockerfile
-  pull_request:
-    types:
-      - labeled
-  workflow_dispatch:
-    inputs:
-      cache-enabled:
-        description: Enable or disable cache
-        type: boolean
-        required: false
-        default: true
+on: push
 
 jobs:
   firmware-build:
-    if: >-
-      ${{ github.event_name == 'workflow_dispatch' ||
-          (github.event_name == 'push' &&
-            (github.ref == 'refs/heads/develop' ||
-             github.ref == 'refs/heads/main' ||
-             startsWith(github.ref, 'refs/heads/release/stable-')
-          ) ||
-          (github.event_name == 'pull_request' &&
-            contains(join(github.event.pull_request.labels.*.name, ' '), 'approved'))
-          )
-      }}
     runs-on: ubuntu-latest
+    outputs:
+      update-dl-cache-needed: ${{ steps.update-dl-cache.outputs.needed }}
     strategy:
       matrix:
         product: [unified, waffle]
         type: [internal, release]
+    env:
+      typ_product: ${{ matrix.product }}-${{ matrix.type }}
     steps:
-      - name: build
-        if: github.event_name != 'workflow_dispatch'
+      - name: Compute cache download size
+        if: ${{ fromJSON(env.CACHE_ENABLED) }}
+        id: dl-cache-size
         run: |
-          echo "noop"
+          mkdir -p "${CACHE_DIR}/dl"
+          CURRENT=$(du -sb "${CACHE_DIR}/dl" | cut -f1)
+          echo "current=$CURRENT" >> "$GITHUB_OUTPUT"
+
+      - name: Build OS
+        run: |
+          LEN=$(( RANDOM % (MAX-MIN+1) + MIN ))
+          rand_str=$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c "$LEN")
+          echo "$rand_str" > "${CACHE_DIR}/dl/a"
+
+      - name: Check cache download needs to be updated
+        id: update-dl-cache
+        run: |
+          CURRENT=$(du -sb "${CACHE_DIR}/dl" | cut -f1)
+          echo "Cache size before:${{ steps.dl-cache-size.outputs.current }} after:$CURRENT"
+          if [[ "${{ steps.dl-cache-size.outputs.current }}" -ne "$CURRENT" ]]; then
+            echo "needed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  update-dl-cache:
+    needs: firmware-build
+    runs-on: ubuntu-latest
+    if: ${{ needs.firmware-build.outputs.update-dl-cache-needed == 'true' }}
+    steps:
+
+      - name: Dump out
+        run: |
+          echo "$GITHUB_OUTPUT"
+        timeout-minutes: 120
