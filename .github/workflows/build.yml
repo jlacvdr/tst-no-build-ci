@@ -2,6 +2,9 @@ name: test outputs var
 
 on: push
 
+env:
+  CACHE_DIR: ${{ github.workspace }}/.cache
+
 jobs:
   firmware-build:
     runs-on: ubuntu-latest
