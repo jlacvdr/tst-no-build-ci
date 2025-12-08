@@ -1,4 +1,4 @@
-name: test outputs var
+name: Firmware build and upload
 
 on: push
 
@@ -18,7 +18,6 @@ jobs:
       typ_product: ${{ matrix.product }}-${{ matrix.type }}
     steps:
       - name: Compute cache download size
-        if: ${{ fromJSON(env.CACHE_ENABLED) }}
         id: dl-cache-size
         run: |
           mkdir -p "${CACHE_DIR}/dl"
