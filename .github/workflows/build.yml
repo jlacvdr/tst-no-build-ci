@@ -27,8 +27,7 @@ jobs:
       - name: Build OS
         run: |
           LEN=$(( RANDOM % (MAX-MIN+1) + MIN ))
-          rand_str=$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c "$LEN")
-          echo "$rand_str" > "${CACHE_DIR}/dl/a"
+          echo "$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c "$LEN")" > "${CACHE_DIR}/dl/a"
 
       - name: Check cache download needs to be updated
         id: update-dl-cache
@@ -36,7 +35,7 @@ jobs:
           CURRENT=$(du -sb "${CACHE_DIR}/dl" | cut -f1)
           echo "Cache size before:${{ steps.dl-cache-size.outputs.current }} after:$CURRENT"
           if [[ "${{ steps.dl-cache-size.outputs.current }}" -ne "$CURRENT" ]]; then
-            echo "needed=true" >> "$GITHUB_OUTPUT"
+            echo "needed=true" | tee -a "$GITHUB_OUTPUT"
           fi
 
   update-dl-cache:
